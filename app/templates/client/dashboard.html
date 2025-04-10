@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Client Dashboard - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Welcome, {{ client.company_name }}</h1>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Your Profile</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Company:</strong> {{ client.company_name }}</p>
+                <p><strong>Contact:</strong> {{ client.user.name }}</p>
+                <p><strong>Email:</strong> {{ client.user.email }}</p>
+                <p><strong>Phone:</strong> {{ client.contact_number }}</p>
+                <p><strong>Address:</strong> {{ client.address }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Orders</h5>
+                <a href="{{ url_for('client.orders') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_orders %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ order.items.count() }}</td>
+                                <td>${{ order.total_amount|round(2) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'danger' if order.status == 'cancelled' else 'info' if order.status == 'shipped' else 'warning' }}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('client.order_detail', order_id=order.id) }}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center">
+                    <p class="mb-3">You haven't placed any orders yet.</p>
+                    <a href="{{ url_for('client.products') }}" class="btn btn-primary">Browse Products</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">EchoCoal Products</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <i class="fas fa-fire-alt fa-4x text-success mb-3"></i>
+                        <h5>Explore Our EchoCoal</h5>
+                        <p>High-quality activated carbon made from date kernels</p>
+                        <a href="{{ url_for('client.products') }}?filter=echo_coal" class="btn btn-primary">View Products</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Filter Products</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <i class="fas fa-filter fa-4x text-primary mb-3"></i>
+                        <h5>Eco-Friendly Filters</h5>
+                        <p>Air and water filters using our sustainable EchoCoal</p>
+                        <a href="{{ url_for('client.products') }}?filter=filter" class="btn btn-primary">View Products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

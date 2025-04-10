@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Order Management - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Order Management</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">All Orders</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.client.company_name }}</td>
+                        <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ order.items.count() }}</td>
+                        <td>${{ order.total_amount|round(2) }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'danger' if order.status == 'cancelled' else 'info' if order.status == 'shipped' else 'warning' }}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Products - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Our Products</h1>
+
+<div class="mb-4">
+    <div class="btn-group filter-group">
+        <button class="btn btn-outline-primary filter-btn active" data-filter="all">All Products</button>
+        <button class="btn btn-outline-primary filter-btn" data-filter="echo_coal">EchoCoal</button>
+        <button class="btn btn-outline-primary filter-btn" data-filter="filter_air">Air Filters</button>
+        <button class="btn btn-outline-primary filter-btn" data-filter="filter_water">Water Filters</button>
+    </div>
+</div>
+
+<h2 class="mb-3">EchoCoal Products</h2>
+<div class="row mb-5">
+    {% for product in echo_coal_products %}
+    <div class="col-md-4 mb-4">
+        <div class="card product-card h-100" data-type="echo_coal">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                <i class="fas fa-fire-alt fa-4x text-success"></i>
+            </div>
+            {% endif %}
+            <div class="product-stock">Stock: {{ product.stock }}</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <p class="product-price">${{ product.price|round(2) }}</p>
+                
+                <form method="POST" action="{{ url_for('client.add_to_cart') }}">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="quantity-control me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary decrease">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control mx-2" style="width: 60px;">
+                            <button type="button" class="btn btn-sm btn-outline-secondary increase">+</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" {{ 'disabled' if product.stock == 0 }}>
+                        <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mb-3">Air Filters</h2>
+<div class="row mb-5">
+    {% for product in air_filter_products %}
+    <div class="col-md-4 mb-4">
+        <div class="card product-card h-100" data-type="filter_air">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                <i class="fas fa-wind fa-4x text-primary"></i>
+            </div>
+            {% endif %}
+            <div class="product-stock">Stock: {{ product.stock }}</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <p class="product-price">${{ product.price|round(2) }}</p>
+                
+                <form method="POST" action="{{ url_for('client.add_to_cart') }}">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="quantity-control me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary decrease">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control mx-2" style="width: 60px;">
+                            <button type="button" class="btn btn-sm btn-outline-secondary increase">+</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" {{ 'disabled' if product.stock == 0 }}>
+                        <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<h2 class="mb-3">Water Filters</h2>
+<div class="row">
+    {% for product in water_filter_products %}
+    <div class="col-md-4 mb-4">
+        <div class="card product-card h-100" data-type="filter_water">
+            {% if product.image_url %}
+            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+            {% else %}
+            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                <i class="fas fa-tint fa-4x text-info"></i>
+            </div>
+            {% endif %}
+            <div class="product-stock">Stock: {{ product.stock }}</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
+                <p class="product-price">${{ product.price|round(2) }}</p>
+                
+                <form method="POST" action="{{ url_for('client.add_to_cart') }}">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="quantity-control me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary decrease">-</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control mx-2" style="width: 60px;">
+                            <button type="button" class="btn btn-sm btn-outline-secondary increase">+</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" {{ 'disabled' if product.stock == 0 }}>
+                        <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

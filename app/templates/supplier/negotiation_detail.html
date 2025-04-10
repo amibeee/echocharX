@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Negotiation Details - EchoCharX{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Negotiation Details</h1>
+    <a href="{{ url_for('supplier.negotiations') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Negotiations
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Negotiation Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Material:</strong> {{ raw_material.name }}</p>
+                <p><strong>Material Type:</strong> {{ raw_material.type }}</p>
+                <p><strong>Started:</strong> {{ negotiation.created_at.strftime('%Y-%m-%d') }}</p>
+                {% if negotiation.completed_at %}
+                <p><strong>Completed:</strong> {{ negotiation.completed_at.strftime('%Y-%m-%d') }}</p>
+                {% endif %}
+                <p><strong>Status:</strong> 
+                    <span class="badge bg-{{ 'success' if negotiation.status == 'accepted' else 'danger' if negotiation.status == 'rejected' else 'warning' }}">
+                        {{ negotiation.status }}
+                    </span>
+                </p>
+                <p><strong>Initial Price:</strong> ${{ negotiation.initial_price|round(2) }}</p>
+                <p><strong>Current Price:</strong> ${{ negotiation.current_price|round(2) }}</p>
+            </div>
+        </div>
+        
+        {% if negotiation.status == 'in_progress' %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Counter Offer</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('supplier.add_negotiation_message', negotiation_id=negotiation.id) }}" id="counterOfferForm">
+                    <input type="hidden" id="currentPrice" value="{{ negotiation.current_price }}">
+                    <div class="mb-3">
+                        <label for="counterPrice" class="form-label">Counter Price ($)</label>
+                        <input type="number" class="form-control" id="counterPrice" name="counter_price" step="0.01" min="{{ negotiation.current_price }}">
+                        <small class="form-text text-muted">Your counter price must be higher than or equal to the current price</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Send Counter Offer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <form method="POST" action="{{ url_for('supplier.accept_negotiation', negotiation_id=negotiation.id) }}">
+                        <button type="submit" class="btn btn-success w-100 mb-2">Accept Current Price</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('supplier.reject_negotiation', negotiation_id=negotiation.id) }}">
+                        <button type="submit" class="btn btn-danger w-100">Reject Negotiation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Conversation</h5>
+            </div>
+            <div class="card-body">
+                <div class="chat-container">
+                    {% for message in messages %}
+                    <div class="chat-message {{ 'chat-message-supplier' if message.sender_id == current_user.id else 'chat-message-admin' }}">
+                        <div class="chat-message-content">
+                            {{ message.message }}
+                        </div>
+                        <div class="chat-time">
+                            {{ message.sender.name }} - {{ message.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                {% if negotiation.status == 'in_progress' %}
+                <form method="POST" action="{{ url_for('supplier.add_negotiation_message', negotiation_id=negotiation.id) }}" class="mt-4">
+                    <div class="mb-3">
+                        <label for="replyMessage" class="form-label">Reply</label>
+                        <textarea class="form-control" id="replyMessage" name="message" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

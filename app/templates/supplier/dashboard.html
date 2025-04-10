@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Dashboard - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Welcome, {{ supplier.company_name }}</h1>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Your Profile</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Company:</strong> {{ supplier.company_name }}</p>
+                <p><strong>Contact:</strong> {{ supplier.user.name }}</p>
+                <p><strong>Email:</strong> {{ supplier.user.email }}</p>
+                <p><strong>Phone:</strong> {{ supplier.contact_number }}</p>
+                <p><strong>Address:</strong> {{ supplier.address }}</p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Add New Supply</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('supplier.add_supply') }}" id="supplyForm">
+                    <div class="mb-3">
+                        <label for="raw_material_id" class="form-label">Raw Material</label>
+                        <select class="form-select" id="raw_material_id" name="raw_material_id" required>
+                            <option value="">Select material</option>
+                            {% for material in raw_materials %}
+                            <option value="{{ material.id }}">{{ material.name }} ({{ material.type }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity (kg)</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" step="0.1" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="unitPrice" class="form-label">Unit Price ($ per kg)</label>
+                        <input type="number" class="form-control" id="unitPrice" name="unit_price" step="0.01" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Total Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <span class="form-control" id="totalPriceDisplay">0.00</span>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Add Supply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Supplies</h5>
+                <a href="{{ url_for('supplier.inventory') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_supplies %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Material</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for supply in recent_supplies %}
+                            <tr>
+                                <td>{{ supply.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ supply.raw_material.name }}</td>
+                                <td>{{ supply.quantity }} kg</td>
+                                <td>${{ supply.total_price|round(2) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if supply.status == 'delivered' else 'warning' if supply.status == 'pending' else 'info' }}">
+                                        {{ supply.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center">
+                    <p>You haven't added any supplies yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Active Negotiations</h5>
+                <a href="{{ url_for('supplier.negotiations') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if active_negotiations %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Material</th>
+                                <th>Current Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for negotiation in active_negotiations %}
+                            <tr>
+                                <td>{{ negotiation.created_at.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ negotiation.raw_material.name }}</td>
+                                <td>${{ negotiation.current_price|round(2) }}</td>
+                                <td>
+                                    <a href="{{ url_for('supplier.negotiation_detail', negotiation_id=negotiation.id) }}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="p-4 text-center">
+                    <p>No active negotiations at the moment.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

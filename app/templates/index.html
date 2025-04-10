@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}EchoCharX - From Date Kernels to Eco Solutions{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <h1>Transforming Waste Into Eco-Friendly Solutions</h1>
+                <p class="lead">At EchoCharX, we convert date kernels into high-quality activated carbon for sustainable water and air filters.</p>
+                <div class="mt-5">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-3">Register Now</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">Login</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="process-section">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Eco-Friendly Process</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="process-card">
+                    <i class="fas fa-seedling"></i>
+                    <h3>Sustainable Sourcing</h3>
+                    <p>We collect date kernels that would otherwise go to waste, providing a second life for this agricultural byproduct.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="process-card">
+                    <i class="fas fa-industry"></i>
+                    <h3>Eco-Processing</h3>
+                    <p>Our proprietary process converts date kernels into high-quality activated carbon using minimal energy and resources.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="process-card">
+                    <i class="fas fa-filter"></i>
+                    <h3>Superior Filtration</h3>
+                    <p>The resulting EchoCoal provides excellent filtration properties for both water and air purification applications.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2>Partnering for a Greener Planet</h2>
+                <p>EchoCharX collaborates with suppliers and manufacturers to create a sustainable supply chain for eco-friendly filtration products.</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Reduced carbon footprint</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Agricultural waste upcycling</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> Local community support</li>
+                    <li><i class="fas fa-check-circle text-success me-2"></i> High-quality filtration products</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Eco-friendly process" class="img-fluid rounded shadow" style="width: auto; height: 400px;">
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

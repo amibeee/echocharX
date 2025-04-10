@@ -1,0 +1,44 @@
+echocharx/
+├── app/
+│   ├── __init__.py
+│   ├── models.py
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── admin_routes.py
+│   │   ├── auth_routes.py
+│   │   ├── client_routes.py
+│   │   └── supplier_routes.py
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   ├── js/
+│   │   │   ├── charts.js
+│   │   │   ├── admin.js
+│   │   │   ├── supplier.js
+│   │   │   └── client.js
+│   │   └── img/
+│   │       └── logo.png
+│   └── templates/
+│       ├── admin/
+│       │   ├── dashboard.html
+│       │   ├── inventory.html
+│       │   ├── suppliers.html
+│       │   ├── production.html
+│       │   ├── orders.html
+│       │   └── negotiations.html
+│       ├── auth/
+│       │   ├── login.html
+│       │   └── register.html
+│       ├── client/
+│       │   ├── dashboard.html
+│       │   ├── products.html
+│       │   └── orders.html
+│       ├── supplier/
+│       │   ├── dashboard.html
+│       │   ├── inventory.html
+│       │   └── negotiations.html
+│       ├── base.html
+│       └── index.html
+├── config.py
+├── requirements.txt
+└── run.py

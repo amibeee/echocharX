@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4 col-lg-2">
+        <div class="stats-card">
+            <i class="fas fa-industry"></i>
+            <h2>{{ suppliers_count }}</h2>
+            <p>Suppliers</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stats-card">
+            <i class="fas fa-users"></i>
+            <h2>{{ clients_count }}</h2>
+            <p>Clients</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stats-card">
+            <i class="fas fa-leaf"></i>
+            <h2>{{ raw_materials_count }}</h2>
+            <p>Raw Materials</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stats-card">
+            <i class="fas fa-box"></i>
+            <h2>{{ products_count }}</h2>
+            <p>Products</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stats-card">
+            <i class="fas fa-shopping-cart"></i>
+            <h2>{{ orders_count }}</h2>
+            <p>Orders</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-lg-2">
+        <div class="stats-card">
+            <i class="fas fa-handshake"></i>
+            <h2>{{ pending_negotiations }}</h2>
+            <p>Active Negotiations</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="chart-container">
+            <canvas id="salesChart" height="300"></canvas>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="chart-container">
+            <canvas id="inventoryChart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="chart-container">
+            <canvas id="productionChart" height="300"></canvas>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="chart-container">
+            <canvas id="rawMaterialsChart" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Orders</h5>
+                <a href="{{ url_for('admin.orders') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Client</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in recent_orders %}
+                            <tr>
+                                <td><a href="{{ url_for('admin.order_detail', order_id=order.id) }}">#{{ order.id }}</a></td>
+                                <td>{{ order.client.company_name }}</td>
+                                <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
+                                <td>${{ order.total_amount|round(2) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if order.status == 'delivered' else 'warning' if order.status == 'pending' else 'info' }}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Pending Supplies</h5>
+                <a href="{{ url_for('admin.suppliers') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Material</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for supply in pending_supplies %}
+                            <tr>
+                                <td>{{ supply.supplier.company_name }}</td>
+                                <td>{{ supply.raw_material.name }}</td>
+                                <td>{{ supply.quantity }}</td>
+                                <td>${{ supply.total_price|round(2) }}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('admin.confirm_supply', supply_id=supply.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

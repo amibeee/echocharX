@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Inventory Management - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Inventory Management</h1>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Raw Materials</h5>
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addRawMaterialModal">
+                    <i class="fas fa-plus"></i> Add Raw Material
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for material in raw_materials %}
+                            <tr>
+                                <td>{{ material.id }}</td>
+                                <td>{{ material.name }}</td>
+                                <td>
+                                    <span class="badge bg-info">{{ material.type }}</span>
+                                </td>
+                                <td>{{ material.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Products</h5>
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="fas fa-plus"></i> Add Product
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>{{ product.id }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>
+                                    {% if product.type == 'filter' %}
+                                        <span class="badge bg-primary">{{ product.type }} ({{ product.filter_type }})</span>
+                                    {% else %}
+                                        <span class="badge bg-success">{{ product.type }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>${{ product.price|round(2) }}</td>
+                                <td>{{ product.stock }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Raw Material Modal -->
+<div class="modal fade" id="addRawMaterialModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Raw Material</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.add_raw_material') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Material Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Material Type</label>
+                        <select class="form-select" id="type" name="type" required>
+                            <option value="date_kernel">Date Kernel</option>
+                            <option value="filter_component">Filter Component</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Material</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin.add_product') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="product_name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="product_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="product_type" class="form-label">Product Type</label>
+                        <select class="form-select" id="product_type" name="type" required>
+                            <option value="echo_coal">Echo Coal</option>
+                            <option value="filter">Filter</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="filterTypeGroup" style="display: none;">
+                        <label for="filter_type" class="form-label">Filter Type</label>
+                        <select class="form-select" id="filter_type" name="filter_type">
+                            <option value="air">Air Filter</option>
+                            <option value="water">Water Filter</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="product_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="product_description" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price ($)</label>
+                        <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Initial Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock" min="0" value="0">
+                    </div>
+                    <div class="mb-3">
+                        <label for="image_url" class="form-label">Image URL</label>
+                        <input type="url" class="form-control" id="image_url" name="image_url">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const productType = document.getElementById('product_type');
+        const filterTypeGroup = document.getElementById('filterTypeGroup');
+        
+        productType.addEventListener('change', function() {
+            if (this.value === 'filter') {
+                filterTypeGroup.style.display = 'block';
+            } else {
+                filterTypeGroup.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

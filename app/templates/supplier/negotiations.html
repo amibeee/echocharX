@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Negotiations - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Negotiations</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">All Negotiations</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if negotiations %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Material</th>
+                        <th>Initial Price</th>
+                        <th>Current Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for negotiation in negotiations %}
+                    <tr>
+                        <td>{{ negotiation.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ negotiation.raw_material.name }}</td>
+                        <td>${{ negotiation.initial_price|round(2) }}</td>
+                        <td>${{ negotiation.current_price|round(2) }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if negotiation.status == 'accepted' else 'danger' if negotiation.status == 'rejected' else 'warning' }}">
+                                {{ negotiation.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('supplier.negotiation_detail', negotiation_id=negotiation.id) }}" class="btn btn-sm btn-info">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="p-4 text-center">
+            <p>No negotiations found.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Production Management - EchoCharX{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Production Management</h1>
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Plan New Production</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.add_production') }}" id="productionForm">
+                    <div class="mb-3">
+                        <label for="product_id" class="form-label">Product</label>
+                        <select class="form-select" id="product_id" name="product_id" required>
+                            <option value="">Select product</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity to Produce</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="raw_material_used" class="form-label">Raw Material Used (kg)</label>
+                        <input type="number" class="form-control" id="raw_material_used" name="raw_material_used" step="0.1" min="0" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Plan Production</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Raw Material Stock</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for material in raw_materials %}
+                            <tr>
+                                <td>{{ material.name }}</td>
+                                <td>{{ material.type }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Production Schedule</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Material Used</th>
+                                <th>Status</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for production in productions %}
+                            <tr>
+                                <td>{{ production.id }}</td>
+                                <td>{{ production.product.name }}</td>
+                                <td>{{ production.quantity }}</td>
+                                <td>{{ production.raw_material_used }} kg</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if production.status == 'completed' else 'warning' if production.status == 'planned' else 'info' }}">
+                                        {{ production.status }}
+                                    </span>
+                                </td>
+                                <td>{{ production.start_date.strftime('%Y-%m-%d') if production.start_date else 'Not Started' }}</td>
+                                <td>{{ production.end_date.strftime('%Y-%m-%d') if production.end_date else 'Not Completed' }}</td>
+                                <td>
+                                    {% if production.status == 'planned' %}
+                                    <form method="POST" action="{{ url_for('admin.start_production', production_id=production.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-primary">Start</button>
+                                    </form>
+                                    {% elif production.status == 'in_progress' %}
+                                    <form method="POST" action="{{ url_for('admin.complete_production', production_id=production.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-success">Complete</button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
